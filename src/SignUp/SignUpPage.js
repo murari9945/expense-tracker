@@ -45,7 +45,7 @@ const SignUp = () => {
               const idToken = data.idToken;
               console.log(idToken);
              // authContext.login(idToken);
-              history.push('/');
+              history.push('/dummy');
             });
           } else {
             return res.json().then((data) => {
@@ -93,6 +93,15 @@ const SignUp = () => {
    
        
   };
+  if (isLogin) {
+    // Render the dummy screen
+    return (
+      <section>
+        <h1>Welcome to Expense Tracker</h1>
+      </section>
+    );
+  }
+
  
 
   return (
