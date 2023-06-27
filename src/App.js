@@ -9,12 +9,22 @@ import { AuthContext } from './Auth/AuthContext';
 
 function App() {
   const authContext=useContext(AuthContext);
+  const handleVerifyEmail = () => {
+    authContext.sendEmailVerification();
+  };
   return (
     <Router>
  <Layout>
       <Switch>
         
-      <Route path="/" exact><SignUpPage/></Route>
+      <Route path="/" exact>{authContext.isLoggedIn ? (
+            <>
+              <p>Please verify your email address by clicking the button below:</p>
+              <button onClick={handleVerifyEmail}>Verify Email</button>
+            </>
+          ) : (
+            <SignUpPage />
+          )}</Route>
     
       </Switch>
 

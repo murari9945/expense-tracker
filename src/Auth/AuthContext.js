@@ -32,6 +32,27 @@ const AuthContextProvider = (props) => {
     setToken(null);
     localStorage.removeItem('token');
   };
+  
+  const sendEmailVerification = () => {
+    fetch('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyClIPPOHZO2rXXR0jqDK2r6W4eXHCqU5SQ', {
+      method: 'POST',
+      body: JSON.stringify({
+        requestType: 'VERIFY_EMAIL',
+        idToken: token,
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Email verification sent:', data);
+      })
+      .catch((error) => {
+        console.log('Email verification error:', error);
+      });
+  };
+
 
   return (
     <AuthContext.Provider
@@ -40,6 +61,7 @@ const AuthContextProvider = (props) => {
         isLoggedIn:userLoggedIn,
         login: loginHandler,
         logout: logoutHandler,
+        sendEmailVerification:sendEmailVerification,
       }}
     >
       {props.children}
