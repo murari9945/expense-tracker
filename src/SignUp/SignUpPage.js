@@ -21,10 +21,7 @@ const SignUp = () => {
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
   };
-  const logoutHandler = () => {
-    authContext.logout(); // Clear the authentication token
-    history.push('/'); // Redirect to signup page
-  };
+ 
   const submitHandler = (event) => {
     event.preventDefault();
     const givenEmail = emailRef.current.value;
@@ -107,7 +104,7 @@ const SignUp = () => {
       
        
        <ProfilePage  idToken={authContext.token}/>
-       <button onClick={logoutHandler}>Logout</button>
+    
       </section>
     );
   }
