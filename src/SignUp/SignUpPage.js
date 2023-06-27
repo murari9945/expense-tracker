@@ -3,6 +3,7 @@ import { useState, useRef, useContext,useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import classes from './SignUpPage.module.css';
 import ProfilePage from '../Auth/ProfilePage';
+import { AuthContext } from '../Auth/AuthContext';
 
 
 const SignUp = () => {
@@ -11,6 +12,8 @@ const SignUp = () => {
   const history = useHistory();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setisLoading] = useState(false);
+  const authContext = useContext(AuthContext);
+
   
 
  // const newPasswordRef = useRef();
@@ -18,7 +21,10 @@ const SignUp = () => {
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
   };
- 
+  const logoutHandler = () => {
+    authContext.logout(); // Clear the authentication token
+    history.push('/'); // Redirect to signup page
+  };
   const submitHandler = (event) => {
     event.preventDefault();
     const givenEmail = emailRef.current.value;
@@ -45,8 +51,8 @@ const SignUp = () => {
             return res.json().then((data) => {
               const idToken = data.idToken;
               console.log(idToken);
-             // authContext.login(idToken);
-              history.push('/dummy');
+              authContext.login(idToken);
+              history.push('/');
             });
           } else {
             return res.json().then((data) => {
@@ -94,12 +100,14 @@ const SignUp = () => {
    
        
   };
-  if (isLogin) {
+  if (isLogin && authContext.isLoggedIn) {
     // Render the dummy screen
     return (
       <section>
       
-        <ProfilePage/>
+       
+       <ProfilePage  idToken={authContext.token}/>
+       <button onClick={logoutHandler}>Logout</button>
       </section>
     );
   }

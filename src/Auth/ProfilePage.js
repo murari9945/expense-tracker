@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from './AuthContext';
 
 const Profile = () => {
   const [showForm, setShowForm] = useState(false);
   const [fullName, setFullName] = useState('');
   const [profileUrl, setProfileUrl] = useState('');
-
+  const authCxt=useContext(AuthContext);
   const handleCompleteNowClick = () => {
     setShowForm(true);
   };
@@ -20,12 +21,7 @@ const Profile = () => {
     event.preventDefault();
     // Perform the update logic
     console.log('Update clicked:', fullName, profileUrl);
-    const requestBody = {
-        idToken: 'YOUR_FIREBASE_ID_TOKEN',
-        displayName: fullName,
-        photoUrl: profileUrl,
-        returnSecureToken: true,
-      };
+    
     // Reset the form
     //setFullName('');
    // setProfileUrl('');
@@ -34,10 +30,16 @@ const Profile = () => {
     `https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyClIPPOHZO2rXXR0jqDK2r6W4eXHCqU5SQ`,
     {
       method: 'POST',
+      body :JSON.stringify( {
+        idToken:authCxt.token,
+        displayName: fullName,
+        photoUrl: profileUrl,
+        returnSecureToken: true,
+      }),
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(requestBody),
+     
     }
   )
     .then((response) => response.json())
