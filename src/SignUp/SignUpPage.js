@@ -2,6 +2,7 @@ import { useState, useRef, useContext,useEffect } from 'react';
 
 import { useHistory } from 'react-router-dom';
 import classes from './SignUpPage.module.css';
+import ProfilePage from '../Auth/ProfilePage';
 
 
 const SignUp = () => {
@@ -97,7 +98,8 @@ const SignUp = () => {
     // Render the dummy screen
     return (
       <section>
-        <h1>Welcome to Expense Tracker</h1>
+      
+        <ProfilePage/>
       </section>
     );
   }
