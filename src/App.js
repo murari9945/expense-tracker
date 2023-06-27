@@ -5,6 +5,7 @@ import Layout from './Navigation/Layout';
 import SignUpPage from './SignUp/SignUpPage';
 import { useContext} from 'react';
 import { AuthContext } from './Auth/AuthContext';
+import ForgotPassword from './Auth/ForgetPassword';
 
 
 function App() {
@@ -31,7 +32,9 @@ function App() {
           ) : (
             <SignUpPage />
           )}</Route>
-    
+    <Route path="/forgot-password">
+            <ForgotPassword />
+          </Route>
       </Switch>
 
     </Layout>

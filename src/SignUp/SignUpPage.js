@@ -1,6 +1,6 @@
 import { useState, useRef, useContext,useEffect } from 'react';
 
-import { useHistory } from 'react-router-dom';
+import { useHistory,Link } from 'react-router-dom';
 import classes from './SignUpPage.module.css';
 import ProfilePage from '../Auth/ProfilePage';
 import { AuthContext } from '../Auth/AuthContext';
@@ -93,6 +93,10 @@ const SignUp = () => {
           console.log('Error:', error);
         });
     }
+    if (!isLogin) {
+      // Redirect to the forgot password page
+      history.push('/forgot-password');
+    }
 
    
        
@@ -127,9 +131,13 @@ const SignUp = () => {
           {!isLoading && <button>{isLogin ? 'login' : 'create account'}</button>}
           
 
-          <button type='button' className={classes.toggle} onClick={switchAuthModeHandler}>
-            {isLogin ? 'Create new account' : 'Login with existing account'}
-          </button>
+          {isLogin ? (
+            <Link to="/forgot-password">Forgot Password</Link>
+          ) : (
+            <button type="button" className={classes.toggle} onClick={switchAuthModeHandler}>
+              Create new account
+            </button>
+          )}
         </div>
       </form>
     
