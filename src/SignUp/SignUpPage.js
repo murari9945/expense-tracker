@@ -13,6 +13,7 @@ const SignUp = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setisLoading] = useState(false);
   const authContext = useContext(AuthContext);
+  
 
   
 
@@ -49,7 +50,7 @@ const SignUp = () => {
               const idToken = data.idToken;
               console.log(idToken);
               authContext.login(idToken);
-              history.push('/');
+              history.push('/add-expense');
             });
           } else {
             return res.json().then((data) => {
@@ -95,12 +96,14 @@ const SignUp = () => {
     }
     if (!isLogin) {
       // Redirect to the forgot password page
-      history.push('/forgot-password');
+      history.push('/add-expense');
     }
 
    
        
   };
+  
+
   if (isLogin && authContext.isLoggedIn) {
     // Render the dummy screen
     return (
@@ -108,7 +111,7 @@ const SignUp = () => {
       
        
        <ProfilePage  idToken={authContext.token}/>
-    
+     
       </section>
     );
   }
@@ -131,7 +134,7 @@ const SignUp = () => {
           {!isLoading && <button>{isLogin ? 'login' : 'create account'}</button>}
           
 
-          {isLogin ? (
+          {!isLogin ? (
             <Link to="/forgot-password">Forgot Password</Link>
           ) : (
             <button type="button" className={classes.toggle} onClick={switchAuthModeHandler}>
@@ -140,7 +143,9 @@ const SignUp = () => {
           )}
         </div>
       </form>
-    
+     
+
+      
     </section>
   );
 };

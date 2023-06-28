@@ -6,6 +6,7 @@ import SignUpPage from './SignUp/SignUpPage';
 import { useContext} from 'react';
 import { AuthContext } from './Auth/AuthContext';
 import ForgotPassword from './Auth/ForgetPassword';
+import AddExpensePage from './SignUp/AddExpensePage';
 
 
 function App() {
@@ -22,18 +23,29 @@ function App() {
     <Router>
  <Layout>
       <Switch>
+      <Route path="/" exact>
+            {authContext.isLoggedIn ? (
+              authContext.isEmailVerified ? (
+                // Render the add expense page if email is verified
+                <AddExpensePage />
+              ) : (
+                <>
+                  <p>Please verify your email address by clicking the button below:</p>
+                  <button onClick={handleVerifyEmail}>Verify Email</button>
+                  <button onClick={logoutHandler}>Logout</button>
+                </>
+              )
+            ) : (
+              <SignUpPage />
+            )}
+          </Route>
         
-      <Route path="/" exact>{authContext.isLoggedIn ? (
-            <>
-              <p>Please verify your email address by clicking the button below:</p>
-              <button onClick={handleVerifyEmail}>Verify Email</button>
-              <button onClick={logoutHandler}>Logout</button>
-            </>
-          ) : (
-            <SignUpPage />
-          )}</Route>
+      
     <Route path="/forgot-password">
             <ForgotPassword />
+          </Route>
+          <Route path="/add-expense">
+            <AddExpensePage />
           </Route>
       </Switch>
 

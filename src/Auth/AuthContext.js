@@ -5,11 +5,15 @@ export const AuthContext = createContext({
   isLoggedIn:false,
   login: (token) => {},
   logout: () => {},
+  sendEmailVerification: () => {},
+  // Add the isEmailVerified state and its default value
+  isEmailVerified: false,
 });
 
 const AuthContextProvider = (props) => {
     const initialToken=localStorage.getItem('token');
   const [token, setToken] = useState(initialToken);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const userLoggedIn= !!token;
   useEffect(() => {
     let logoutTimer;
@@ -51,6 +55,7 @@ const AuthContextProvider = (props) => {
       .catch((error) => {
         console.log('Email verification error:', error);
       });
+      
   };
 
 
@@ -62,6 +67,7 @@ const AuthContextProvider = (props) => {
         login: loginHandler,
         logout: logoutHandler,
         sendEmailVerification:sendEmailVerification,
+        isEmailVerified:isEmailVerified,
       }}
     >
       {props.children}
