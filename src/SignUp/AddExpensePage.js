@@ -23,6 +23,9 @@ const Exp = () => {
   const [expenseList, setExpenseList] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedExpense, setEditedExpense] = useState(null);
+
 
   const fetchExpenses = useCallback(async () => {
     setLoading(true);
@@ -76,6 +79,62 @@ const Exp = () => {
       console.error('Error adding expense:', error);
     }
   };
+  const deleteExpenseHandler = async (expenseId) => {
+    try {
+      const response = await fetch(`https://expense-auth-38581-default-rtdb.firebaseio.com/expenses/${expenseId}.json`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete expense. Please try again.');
+      }
+
+      console.log('Expense successfully deleted');
+      // Refresh the expense list after deleting an expense
+      fetchExpenses();
+    } catch (error) {
+      console.error('Error deleting expense:', error);
+    }
+  };
+  const startEditingHandler = (expense) => {
+    setIsEditing(true);
+    setEditedExpense(expense);
+  };
+  const submitEditingHandler = async (event) => {
+    event.preventDefault();
+
+    const moneySpent = event.target.elements.moneySpent.value;
+    const description = event.target.elements.description.value;
+    const category = event.target.elements.category.value;
+
+    const editedExpenseData = {
+      moneySpent,
+      description,
+      category,
+    };
+
+    try {
+      const response = await fetch(`https://expense-auth-38581-default-rtdb.firebaseio.com/expenses/${editedExpense.id}.json`, {
+        method: 'PUT',
+        body: JSON.stringify(editedExpenseData),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update expense. Please try again.');
+      }
+
+      console.log('Expense successfully updated');
+      setIsEditing(false);
+      setEditedExpense(null);
+      // Refresh the expense list after updating an expense
+      fetchExpenses();
+    } catch (error) {
+      console.error('Error updating expense:', error);
+    }
+  };
 
   return (
     <section>
@@ -119,6 +178,30 @@ const Exp = () => {
                   <strong>Description:</strong> {expense.description}
                   <br />
                   <strong>Category:</strong> {expense.category}
+                  <br/>
+                  {!isEditing && (
+                  <div>
+                    <button onClick={() => deleteExpenseHandler(expense.id)}>Delete</button>
+                    <button onClick={() => startEditingHandler(expense)}>Edit</button>
+                  </div>
+                )}
+                {isEditing && editedExpense && editedExpense.id === expense.id && (
+  <form onSubmit={submitEditingHandler}>
+    <label htmlFor="moneySpent">Money Spent:</label>
+    <input type="text" id="moneySpent" defaultValue={editedExpense.moneySpent} />
+    <br />
+
+    <label htmlFor="description">Description:</label>
+    <input type="text" id="description" defaultValue={editedExpense.description} />
+    <br />
+
+    <label htmlFor="category">Category:</label>
+    <input type="text" id="category" defaultValue={editedExpense.category} />
+    <br />
+
+    <button type="submit">Submit</button>
+  </form>
+)}
                 </li>
               ))}
             </ul>
