@@ -4,19 +4,24 @@ import {BrowserRouter as Router,Switch,Route,useHistory } from 'react-router-dom
 import Layout from './Navigation/Layout';
 import SignUpPage from './SignUp/SignUpPage';
 import { useContext} from 'react';
-import { AuthContext } from './Auth/AuthContext';
+//import { AuthContext } from './Auth/AuthContext';
+import { useSelector, useDispatch } from 'react-redux';
 import ForgotPassword from './Auth/ForgetPassword';
 import AddExpensePage from './SignUp/AddExpensePage';
+import { authActions } from './Auth/authReducer';
 
 
 function App() {
-  const authContext=useContext(AuthContext);
+//  const authContext=useContext(AuthContext);
+const dispatch =useDispatch();
   const history = useHistory();
+  const isLoggedIn = useSelector((state) => state.auth.token !== null);
+  const isEmailVerified = useSelector((state) => state.auth.isEmailVerified);
   const handleVerifyEmail = () => {
-    authContext.sendEmailVerification();
+    dispatch(authActions.sendEmailVerification());
   };
   const logoutHandler = () => {
-    authContext.logout(); // Clear the authentication token
+    dispatch(authActions.logout()); // Clear the authentication token
     history.push('/'); // Redirect to signup page
   };
   return (
@@ -24,8 +29,8 @@ function App() {
  <Layout>
       <Switch>
       <Route path="/" exact>
-            {authContext.isLoggedIn ? (
-              authContext.isEmailVerified ? (
+            {isLoggedIn ? (
+              isEmailVerified ? (
                 // Render the add expense page if email is verified
                 <AddExpensePage />
               ) : (

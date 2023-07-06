@@ -1,6 +1,7 @@
 import React, { createContext, useState,useEffect } from 'react';
-
-export const AuthContext = createContext({
+import { useSelector, useDispatch } from 'react-redux';
+import { authActions } from './authReducer';
+/*export const AuthContext = createContext({
   token:' ',
   isLoggedIn:false,
   login: (token) => {},
@@ -8,12 +9,15 @@ export const AuthContext = createContext({
   sendEmailVerification: () => {},
   // Add the isEmailVerified state and its default value
   isEmailVerified: false,
-});
+});*/
 
 const AuthContextProvider = (props) => {
-    const initialToken=localStorage.getItem('token');
+   /* const initialToken=localStorage.getItem('token');
   const [token, setToken] = useState(initialToken);
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);*/
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
+  const isEmailVerified = useSelector((state) => state.auth.isEmailVerified);
   const userLoggedIn= !!token;
   useEffect(() => {
     let logoutTimer;
@@ -28,12 +32,14 @@ const AuthContextProvider = (props) => {
   }, [token]);
 
   const loginHandler = (token) => {
-    setToken(token);
+   // setToken(token);
+   dispatch(authActions.login(token));
     localStorage.setItem('token',token);
   };
 
   const logoutHandler = () => {
-    setToken(null);
+    //setToken(null);
+    dispatch(authActions.logout());
     localStorage.removeItem('token');
   };
   

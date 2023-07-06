@@ -1,21 +1,26 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from './AuthContext';
+//import { AuthContext } from './AuthContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { profileActions } from '../Auth/authReducer';
+
 
 const Profile = () => {
-  const [showForm, setShowForm] = useState(false);
-  const [fullName, setFullName] = useState('');
-  const [profileUrl, setProfileUrl] = useState('');
-  const authCxt = useContext(AuthContext);
+  const dispatch=useDispatch();
+  //const [showForm, setShowForm] = useState(false);
+  //const [fullName, setFullName] = useState('');
+  //const [profileUrl, setProfileUrl] = useState('');
+  //const authCxt = useContext(AuthContext);
+  const { showForm, fullName, profileUrl } = useSelector((state) => state.profile);
 
   useEffect(() => {
-    if (authCxt.token) {
+    if (token) {
       fetch(
         `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyClIPPOHZO2rXXR0jqDK2r6W4eXHCqU5SQ`,
         {
           method: 'POST',
           body: JSON.stringify({
-            idToken: authCxt.token,
+            idToken:token,
           }),
           headers: {
             'Content-Type': 'application/json',
@@ -26,24 +31,28 @@ const Profile = () => {
         .then((data) => {
           if (data.users && data.users.length > 0) {
             const user = data.users[0];
-            setFullName(user.displayName || '');
-            setProfileUrl(user.photoUrl || '');
+           // setFullName(user.displayName || '');
+           // setProfileUrl(user.photoUrl || '');
+           dispatch(profileActions.setFullName(user.displayName || ''));
+           dispatch(profileActions.setProfileUrl(user.photoUrl || ''));
           }
         })
         .catch((error) => {
           console.log('Profile retrieval error:', error);
         });
     }
-  }, [authCxt.token]);
+  }, [dispatch,token]);
 
   const handleCompleteNowClick = () => {
-    setShowForm(true);
+    //setShowForm(true);
+    dispatch(profileActions.toggleForm())
   };
 
   const handleCancelClick = () => {
-    setShowForm(false);
-    setFullName('');
-    setProfileUrl('');
+   // setShowForm(false);
+   // setFullName('');
+  //  setProfileUrl('');
+  dispatch(profileActions.toggleForm())
   };
 
   const handleUpdateClick = (event) => {
@@ -52,9 +61,13 @@ const Profile = () => {
     console.log('Update clicked:', fullName, profileUrl);
 
     // Reset the form
-    setFullName('');
-    setProfileUrl('');
-    setShowForm(false);
+   // setFullName('');
+    //setProfileUrl('');
+    //setShowForm(false);
+    dispatch(profileActions.updateProfile({ fullName, profileUrl }));
+
+    // Reset the form data if needed
+    dispatch(profileActions.toggleForm());
   };
 
   if (showForm) {

@@ -1,9 +1,11 @@
 import { useState, useRef, useContext,useEffect } from 'react';
-
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory,Link } from 'react-router-dom';
 import classes from './SignUpPage.module.css';
 import ProfilePage from '../Auth/ProfilePage';
-import { AuthContext } from '../Auth/AuthContext';
+import { authActions } from '../Auth/authReducer';
+import {login} from '../Auth/authReducer';
+//import { AuthContext } from '../Auth/AuthContext';
 
 
 const SignUp = () => {
@@ -12,10 +14,13 @@ const SignUp = () => {
   const history = useHistory();
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setisLoading] = useState(false);
-  const authContext = useContext(AuthContext);
+  const dispatch = useDispatch();
+
+ // const authContext = useContext(AuthContext);
   
 
-  
+ const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+ const token = useSelector((state) => state.auth.token);
 
  // const newPasswordRef = useRef();
 
@@ -48,8 +53,9 @@ const SignUp = () => {
           if (res.ok) {
             return res.json().then((data) => {
               const idToken = data.idToken;
+              dispatch(authActions.login(idToken));
               console.log(idToken);
-              authContext.login(idToken);
+             // authContext.login(idToken);
               history.push('/add-expense');
             });
           } else {
@@ -104,13 +110,13 @@ const SignUp = () => {
   };
   
 
-  if (isLogin && authContext.isLoggedIn) {
+  if (isLogin && isLoggedIn) {
     // Render the dummy screen
     return (
       <section>
       
        
-       <ProfilePage  idToken={authContext.token}/>
+       <ProfilePage idToken={token}/>
      
       </section>
     );
