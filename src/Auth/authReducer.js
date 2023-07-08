@@ -37,12 +37,26 @@ const profileSlice = createSlice({
       },
     },
   });
+  const themeSlice = createSlice({
+    name: 'theme',
+    initialState:null,
+    reducers: {
+      toggleTheme:  (state, action) => {
+        if (action.payload === 'dark') {
+          return 'dark';
+        } else {
+          return 'light';
+        }
+      },
+    },
+  });
   
 const store = configureStore({
-    reducer: { auth: authSlice.reducer,profile:profileSlice.reducer}
+    reducer: { auth: authSlice.reducer,profile:profileSlice.reducer,theme: themeSlice.reducer,}
   });
 
 export const authActions = authSlice.actions;
 export const profileActions = profileSlice.actions;
+export const themeActions = themeSlice.actions;
 
 export default store;

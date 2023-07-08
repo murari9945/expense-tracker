@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import classes from './SignUpPage.module.css';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
+import { themeActions } from '../Auth/authReducer';
+import { useSelector, useDispatch } from 'react-redux';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -25,6 +27,8 @@ const Exp = () => {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editedExpense, setEditedExpense] = useState(null);
+  const dispatch = useDispatch();
+  const theme = useSelector((state) => state.theme);
 
 
   const fetchExpenses = useCallback(async () => {
@@ -135,17 +139,44 @@ const Exp = () => {
       console.error('Error updating expense:', error);
     }
   };
+  const totalExpenses = expenseList.reduce(
+    (total, expense) => total + Number(expense.moneySpent),
+    0
+  );
+  const toggleThemeHandler = () => {
+    if (theme === 'light') {
+      dispatch(themeActions.toggleTheme('dark'));
+    } else {
+      dispatch(themeActions.toggleTheme('light'));
+    } }
 
+    const downloadExpensesHandler = () => {
+      const csvContent = [
+        'Money Spent,Description,Category',
+        ...expenseList.map((expense) => `${expense.moneySpent},${expense.description},${expense.category}`),
+      ].join('\n');
+  
+      const element = document.createElement('a');
+      const file = new Blob([csvContent], { type: 'text/csv' });
+      element.href = URL.createObjectURL(file);
+      element.download = 'expenses.csv';
+      document.body.appendChild(element); // Required for Firefox
+      element.click();
+      document.body.removeChild(element); // Clean up
+    };
+const activatePremiumHandler = () => {
+    dispatch(themeActions.toggleTheme('dark')); // Dispatch the toggleTheme action with 'dark' theme
+  };
   return (
     <section>
       <div>
         <h2>Add Expense</h2>
         <form onSubmit={addExpenseHandler}>
-          <div className={classes.control}>
-            <label htmlFor='moneySpent'>Money Spent:</label>
+          <div>
+            <label htmlFor='moneySpent'>MoneySpent:</label>
             <input type='text' id='moneySpent' required />
           </div>
-          <div className={classes.control}>
+          <div>
             <label htmlFor='description'>Description:</label>
             <input type='text' id='description' required />
           </div>
@@ -163,6 +194,7 @@ const Exp = () => {
             <button type='submit'>Add Expense</button>
           </div>
         </form>
+        
       </div>
       {isLoading ? (
         <p>Loading expenses...</p>
@@ -209,6 +241,13 @@ const Exp = () => {
         )
       )}
       {error && <p>Error: {error}</p>}
+      {totalExpenses > 10000 && <button className={classes.activatePremiumButton} onClick={activatePremiumHandler}>Activate Premium</button>}
+      <button className={classes.themeToggle} onClick={toggleThemeHandler}>
+        Toggle Theme
+      </button> 
+      <button className={classes.downloadButton} onClick={downloadExpensesHandler}>
+        Download File
+      </button>
     </section>
   );
 };
