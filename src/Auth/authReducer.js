@@ -37,6 +37,7 @@ const profileSlice = createSlice({
       },
     },
   });
+  
   const themeSlice = createSlice({
     name: 'theme',
     initialState:null,

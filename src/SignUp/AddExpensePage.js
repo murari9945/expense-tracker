@@ -28,7 +28,7 @@ const Exp = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedExpense, setEditedExpense] = useState(null);
   const dispatch = useDispatch();
-  const theme = useSelector((state) => state.theme);
+  
 
 
   const fetchExpenses = useCallback(async () => {
@@ -144,11 +144,9 @@ const Exp = () => {
     0
   );
   const toggleThemeHandler = () => {
-    if (theme === 'light') {
-      dispatch(themeActions.toggleTheme('dark'));
-    } else {
-      dispatch(themeActions.toggleTheme('light'));
-    } }
+    dispatch(themeActions.toggleTheme());
+   }
+   
 
     const downloadExpensesHandler = () => {
       const csvContent = [
@@ -168,7 +166,7 @@ const activatePremiumHandler = () => {
     dispatch(themeActions.toggleTheme('dark')); // Dispatch the toggleTheme action with 'dark' theme
   };
   return (
-    <section>
+    <section >
       <div>
         <h2>Add Expense</h2>
         <form onSubmit={addExpenseHandler}>
@@ -242,7 +240,7 @@ const activatePremiumHandler = () => {
       )}
       {error && <p>Error: {error}</p>}
       {totalExpenses > 10000 && <button className={classes.activatePremiumButton} onClick={activatePremiumHandler}>Activate Premium</button>}
-      <button className={classes.themeToggle} onClick={toggleThemeHandler}>
+      <button  onClick={toggleThemeHandler}>
         Toggle Theme
       </button> 
       <button className={classes.downloadButton} onClick={downloadExpensesHandler}>
